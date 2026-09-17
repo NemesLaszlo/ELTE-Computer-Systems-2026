@@ -24,7 +24,7 @@ https://canvas.elte.hu/
 - **Location:** D 00-524 (PC4)
 
 #### Group 12
-- **Time:** 4:15 PM – 5:45 PM (CET/CEST)
+- **Time:** 4:00 PM – 5:30 PM (CET/CEST)
 - **Location:** D 00-411 (PC7)
 
 ---
