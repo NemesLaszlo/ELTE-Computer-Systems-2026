@@ -14,6 +14,7 @@ https://canvas.elte.hu/
 - Server: `szamrend.inf.elte.hu`
 - Login: The `neptun code` in lowercase and then the `password` (infes azonosító)
 - Example: `ssh <your Neptun code is all lowercase>@szamrend.inf.elte.hu`
+- Disk quota full / cannot create files? See [szamrend_storage_quota.md](szamrend_storage_quota.md)
 
 ---
 
