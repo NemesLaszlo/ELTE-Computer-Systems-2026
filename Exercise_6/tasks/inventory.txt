@@ -1,0 +1,9 @@
+product;quantity;unit_price
+alma;10;250
+körte;4;380
+szilva;;300
+banán; 7 ;420
+narancs;3;abc
+
+szőlő;12;990
+

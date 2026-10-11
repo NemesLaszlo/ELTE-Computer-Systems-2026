@@ -1,0 +1,12 @@
+name;points
+Kiss Anna;87
+Nagy Béla;45
+Tóth Csilla;92
+
+Kovács Dániel;38
+Szabó Emese;  71
+Horváth Ferenc;abc
+Varga Gergő;60
+
+
+Molnár Hanna;55

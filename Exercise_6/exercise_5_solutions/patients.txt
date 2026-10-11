@@ -1,0 +1,14 @@
+Kiss Béla,2023-10-13,fejfájás
+Kiss Bertalan,2023-10-13,fejfájás
+Nemes László,2023-10-01,fejfájás
+Tóth Emese,2023-10-20,megfázás
+Szabó Dénes,2023-10-22,megfázás
+Németh Arnold,2023-09-01,gyomorpanaszok
+Molnár Erika,2023-09-19,fejfájás
+Vass Albert,2023-11-07,megfázás
+Horváth Zita,2023-11-15,fejfájás
+Kovács Péter,2023-11-21,megfázás
+Nagy Ákos,2023-05-30,lábfájás
+Nagy Béla,2023-05-04,lábfájás
+Nagy Ilona,2023-05-24,fejfájás
+Farkas Gábor,2023-05-11,lábfájás
