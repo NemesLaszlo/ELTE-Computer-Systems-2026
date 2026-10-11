@@ -19,8 +19,9 @@ Az óra felépítése:
    - [Fájlok bejárása ciklussal](#fájlok-bejárása-ciklussal)
 3. [Az előző óra gyakorló feladatainak megoldása](#az-előző-óra-gyakorló-feladatainak-megoldása)
 4. [Az óra feladatai](#az-óra-feladatai)
-5. [Gyakori hibák](#gyakori-hibák)
-6. [További gyakorlás](#további-gyakorlás)
+5. [Megoldások ciklusokkal](#megoldások-ciklusokkal)
+6. [Gyakori hibák](#gyakori-hibák)
+7. [További gyakorlás](#további-gyakorlás)
 
 ## A mappa tartalma
 
@@ -29,7 +30,8 @@ Exercise_5/
 ├── Material_5.md             ez a leírás
 ├── exercise_4_solutions/     az előző óra gyakorló feladatainak megoldásai
 ├── tasks/                    az órai feladatok kiindulási fájljai (ezekkel dolgozunk)
-└── solutions/                az órai feladatok megoldásai
+├── solutions/                az órai feladatok megoldásai (szűrőkkel, csővezetékkel)
+└── solutions_with_loops/     ugyanezek a feladatok ciklusokkal, tömbökkel megoldva
 ```
 
 | Mappa / fájl | Tartalom |
@@ -41,6 +43,7 @@ Exercise_5/
 | [`tasks/all_lower.txt`](tasks/all_lower.txt) | Csupa kisbetűs fájl (4. feladat) |
 | [`tasks/patients.txt`](tasks/patients.txt) | Betegnyilvántartás: `Név,ÉÉÉÉ-HH-NN,betegség` soronként (6., 8. és 9. feladat) |
 | [`solutions/`](solutions/) | `1_copy.sh` … `9_menu.sh` – az órai feladatok megoldásai, kommentezve |
+| [`solutions_with_loops/`](solutions_with_loops/) | Ugyanazok a feladatok, ugyanazokkal a fájlnevekkel, de `grep` / `cut` / `sort` / `uniq` / `find` / `tr` helyett `while read` és `for` ciklusokkal, tömbökkel (lásd [Megoldások ciklusokkal](#megoldások-ciklusokkal)) |
 
 ### Futtatás
 
@@ -48,8 +51,9 @@ A megoldásokat a `tasks` mappából érdemes futtatni, mert a scriptek az ottan
 
 ```bash
 cd tasks
-chmod +x ../solutions/*.sh
+chmod +x ../solutions/*.sh ../solutions_with_loops/*.sh
 ../solutions/2_search_word.sh menu.txt bor
+../solutions_with_loops/2_search_word.sh menu.txt bor     # ugyanez ciklussal
 ```
 
 > **Megjegyzés:** A scriptekben a magyarázatok kommentként szerepelnek, érdemes a fájlokat megnyitni és a leírással párhuzamosan olvasni. Az órán először **saját magunk** próbáljuk megoldani a feladatot, és csak utána nézzük meg a megoldást.
@@ -870,6 +874,107 @@ Bye! You ran 1 operation(s).
 Amit használunk: `while true`, `read -r -p` az `if` feltételében, `case` egysoros ágakkal, `break`, `continue`, függvények, `for` a fájlok ellenőrzésére, `grep -iw`, `cut | sort -u`, számláló.
 
 > **Tipp:** A `continue` a `*)` ágban átugorja a ciklus végén lévő `((operations++))` sort, így az érvénytelen választás nem számít bele a műveletekbe. A `break` a `0)` ágban lép ki a ciklusból.
+
+---
+
+## Megoldások ciklusokkal
+
+A [`solutions/`](solutions/) mappa megoldásai a Unix-filozófiát követik: kész **szűrőket** (`grep`, `cut`, `sort`, `uniq`, `find`, `tr`) kötünk össze csővezetékkel, és mindegyik elvégzi a maga kis részét. Ez rövid és gyors, de sok kapcsolót kell hozzá fejben tartani.
+
+A [`solutions_with_loops/`](solutions_with_loops/) mappában **ugyanazok a feladatok** vannak megoldva úgy, ahogy egy általános programozási nyelvben (C, C++, Java, Python) tennénk: a fájlt **soronként beolvassuk** egy ciklussal, a sorokat változókba bontjuk, és `if`-ekkel, számlálókkal, tömbökkel dolgozunk. Hosszabb, de minden lépés látszik, és nem kell hozzá egyetlen szűrő kapcsolóit sem ismerni.
+
+| | Szűrők + csővezeték (`solutions/`) | Ciklus + változók (`solutions_with_loops/`) |
+|---|---|---|
+| Ki dolgozza fel a sorokat? | A parancsok (`grep`, `cut`, …) | A saját `while read` ciklusunk |
+| Hol vannak a köztes adatok? | A csővezetékben „folynak” | Változókban, tömbökben |
+| Hossz | Rövid, gyakran egy sor | Hosszabb, de lépésről lépésre követhető |
+| Mire kell figyelni? | A kapcsolókra és a sorrendre (`sort` a `uniq` előtt) | A fájlvégre, az üres sorokra, a Windows-os `\r`-re |
+
+### Példa: a 6. feladat két megoldása
+
+Csővezetékkel (egy sor):
+
+```bash
+grep -E ",[0-9]{4}-$month-[0-9]{2}," "$file" | cut -d ',' -f 3 | sort | uniq -c | sort -rn | head -n 1
+```
+
+Ciklussal és két „párhuzamos” tömbbel (`illnesses[i]` a betegség neve, `counts[i]` a darabszáma, az azonos indexű elemek összetartoznak):
+
+```bash
+illnesses=()
+counts=()
+
+while IFS=, read -r name date illness || [ -n "$name" ]; do
+    illness=${illness%$'\r'}                      # Windows-os sorvég levágása
+    [ -z "$illness" ] && continue                 # üres sor kihagyása
+    [ "${date:5:2}" != "$month" ] && continue     # a grep szűrés helyett
+
+    # Megkeressük a betegséget a tömbben (lineáris keresés).
+    index=-1
+    for (( i=0; i<${#illnesses[@]}; i++ )); do
+        if [ "${illnesses[i]}" == "$illness" ]; then
+            index=$i
+            break
+        fi
+    done
+
+    if [ "$index" -eq -1 ]; then
+        illnesses+=("$illness")                   # új betegség, 1-es számlálóval
+        counts+=(1)
+    else
+        (( counts[index]++ ))                     # már láttuk, növeljük
+    fi
+done < "$file"
+
+# Utána egy egyszerű maximumkeresés a counts tömbön (a sort -rn | head helyett).
+```
+
+### Melyik parancsot mi váltja ki?
+
+| Szűrő / parancs | Ciklusos megfelelője | Példa a mappában |
+|---|---|---|
+| `cp forrás cél` | `while IFS= read -r line` + `printf '%s\n' "$line"` a célfájlba | `1_copy.sh`, `7_backup.sh` |
+| `grep minta` | `while read` + `if [[ $line == *"$minta"* ]]` | `3_find_files_with_word.sh` |
+| `grep -iw szó` | a sor szavakra bontása (`read -r -a words <<< "$line"`), és a szavak összehasonlítása kis- és nagybetűtől függetlenül (`shopt -s nocasematch` + `[[ $w == "$word" ]]`) | `2_search_word.sh` |
+| `grep -c` | számláló változó a ciklusban (`((count++))`) | `8_patients_query.sh -m` |
+| `cut -d ',' -f 3` | `IFS=, read -r name date illness` | `6_…`, `8_…` |
+| a hónap kiszűrése regexszel | `${date:5:2}` (részszöveg) | `6_…`, `8_…` |
+| `sort -u` | tömb + „benne van-e már?” ellenőrzés + saját rendezés (buborékrendezés) | `8_patients_query.sh -l` |
+| `sort \| uniq -c` | párhuzamos tömbök (`név[i]`, `darab[i]`) számlálóval | `6_…`, `8_patients_query.sh -c` |
+| `sort -rn \| head -n 1` | maximumkeresés egy ciklussal | `6_most_common_illness.sh` |
+| `find dir -type f` | önmagát hívó (rekurzív) függvény: `for entry in "$dir"/*`, alkönyvtárra újrahívás | `3_find_files_with_word.sh` |
+| `tr '[:lower:]' '[:upper:]' < fájl` (az egész fájl egyben) | soronkénti ciklus, a sor átalakítása: `tr '[:lower:]' '[:upper:]' <<< "$line"` | `4_uppercase.sh` |
+| `basename útvonal` | `${útvonal##*/}` | `7_backup.sh` |
+| `case` | `if … elif … else` lánc | `5_switches.sh` |
+| `ls`, `whoami` | `for entry in "$HOME"/*`, `$USER` | `5_switches.sh` |
+
+> **Megjegyzés:** A bash 4-től ismeri az asszociatív tömböt is (`declare -A counts; ((counts[$illness]++))`), amellyel a párhuzamos tömbök és a lineáris keresés elhagyható. A megoldásokban szándékosan a más nyelvekből is ismert, egyszerű tömbös változat szerepel.
+
+> **Megjegyzés:** A `${line^^}` / `${line,,}` (nagy- és kisbetűsítés) és a `declare -A` csak a bash 4-es verziójától létezik. A macOS beépített bash-e 3.2-es (`bash --version`), ezért a megoldások ezek helyett a `shopt -s nocasematch` beállítást és a `tr` parancsot használják, így Linuxon, macOS-en és Windows-on (Git Bash, WSL) is futnak. Hogy az ékezetes betűk is átalakulnak-e, az a rendszeren és a nyelvi beállításon (*locale*) múlik.
+
+### Fájlvégek a ciklusos megoldásokban
+
+Ha mi olvassuk a fájlt, nekünk kell figyelni azokra a részletekre, amelyeket a szűrők elintéznek helyettünk:
+
+| Helyzet | Mi a gond? | Megoldás |
+|---|---|---|
+| Az utolsó sor után nincs újsor (pl. `source.txt`, `all_lower.txt`) | A `read` az utolsó sort beolvassa, de hamisat ad, így a ciklusmag nem fut le rá – **elveszik az utolsó sor** | `while IFS= read -r line \|\| [ -n "$line" ]; do` |
+| Üres sor (pl. a fájl végén) | Üres mezőkkel futna le a ciklusmag | `[ -z "$line" ] && continue` |
+| Windows-os (CRLF) sorvég | A sor végén ott marad egy `\r`, így a `"fejfájás\r" == "fejfájás"` hamis | `line=${line%$'\r'}` |
+| Másolás (`1_copy.sh`, `4_uppercase.sh`, `7_backup.sh`) | A `printf '%s\n'` minden sor után újsort ír, a lezáratlan utolsó sor után is | A ciklus után a lezáratlan utolsó sort újsor nélkül írjuk ki, így a másolat bájtra azonos marad |
+
+```bash
+{
+    while IFS= read -r line; do
+        printf '%s\n' "$line"         # a teljes (újsorral lezárt) sorok
+    done
+    if [ -n "$line" ]; then
+        printf '%s' "$line"           # a lezáratlan utolsó sor, újsor nélkül
+    fi
+} < "$source_file" > "$destination_file"
+```
+
+> **Megjegyzés:** Windows-on (Git Bash) a tárolóból letöltött `.txt` fájlok CRLF sorvégűek lehetnek. A `solutions/` csővezetékei ilyenkor a `\r`-t is továbbadják (pl. a `8_patients_query.sh -l` és `-c` kimenetében a sorok végén), a `solutions_with_loops/` megoldásai levágják.
 
 ---
 
