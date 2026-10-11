@@ -1,0 +1,6 @@
+# A shell scriptek és a hozzájuk tartozó adatfájlok minden rendszeren (Windows,
+# macOS, Linux) LF sorvéggel kerüljenek ki a repóból. Windows-on a git
+# (core.autocrlf=true mellett) különben CRLF-re alakítaná őket, és a bash
+# "/bin/bash^M: bad interpreter" hibát adna, a fájlok soraiban pedig ott maradna a \r.
+*.sh  text eol=lf
+*.txt text eol=lf
