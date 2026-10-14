@@ -267,6 +267,13 @@ fi
 
 > **Javasolt gyakorlat:** bash scriptben (`#!/bin/bash`) nyugodtan használjuk a `[[ ]]` formát. A `[ ]` formát is ismerni kell, mert nagyon sok meglévő scriptben ezzel találkozunk.
 
+| Szintaxis | Mikor használd? | Példa |
+|---|---|---|
+| `[ ]` | Egyszerű összehasonlítás, főleg számoknál (`-eq`, `-lt`) | `[ "$n" -lt 10 ]` |
+| `[[ ]]` | Szövegek, logikai feltételek, minták | `[[ $username == "admin" && $password == "secret" ]]` |
+| `( )` | Parancsok futtatása külön subshellben | `(cd /tmp && ls)` |
+| `(( ))` | Számtani műveletek és feltételek | `(( n % 2 == 0 ))` |
+
 ### Adat bekérése a felhasználótól
 
 ```bash
