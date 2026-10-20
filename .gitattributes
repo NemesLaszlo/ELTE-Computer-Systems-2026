@@ -1,6 +1,28 @@
-# A shell scriptek és a hozzájuk tartozó adatfájlok minden rendszeren (Windows,
-# macOS, Linux) LF sorvéggel kerüljenek ki a repóból. Windows-on a git
-# (core.autocrlf=true mellett) különben CRLF-re alakítaná őket, és a bash
-# "/bin/bash^M: bad interpreter" hibát adna, a fájlok soraiban pedig ott maradna a \r.
-*.sh  text eol=lf
-*.txt text eol=lf
+# Sorvégek: minden szöveges fájl LF sorvéggel kerüljön a tárolóba ÉS a munkakönyvtárba,
+# minden rendszeren (Windows, macOS, Linux).
+#
+# Miért? Windows-on a git (core.autocrlf=true mellett) különben CRLF-re alakítaná a
+# fájlokat kicsomagoláskor: a bash a "/bin/bash^M: bad interpreter" hibát adná a
+# scriptekre, a .txt fájlok soraiban ott maradna a \r, és minden mentésnél
+# "LF will be replaced by CRLF" figyelmeztetés jönne. Az eol=lf ezt a szabályt
+# a felhasználó beállítása (autocrlf) FÖLÉ helyezi.
+#
+# A text=auto miatt a git maga ismeri fel, mi szöveges és mi bináris; a bináris
+# fájlokhoz (pdf) nem nyúl.
+*               text=auto eol=lf
+
+# Explicit szabályok a repóban előforduló szöveges fájlokra (a fenti alapértelmezést
+# erősítik meg, és akkor is érvényesek, ha az automatikus felismerés bizonytalan).
+*.sh            text eol=lf
+*.ps1           text eol=lf
+*.txt           text eol=lf
+*.log           text eol=lf
+*.md            text eol=lf
+.gitattributes  text eol=lf
+
+# Bináris fájlok: semmilyen átalakítás.
+*.pdf           binary
+
+# Kivétel: a 6. és a 7-8. heti tesztfájlok között szándékosan CRLF sorvégű és záró
+# újsor nélküli fájlok vannak (a gyakorlat részei). Ezeket a mappák saját
+# .gitattributes fájlja (*.txt -text, *.log -text) bájtra pontosan őrzi meg.

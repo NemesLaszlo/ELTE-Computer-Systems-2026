@@ -1,0 +1,9 @@
+2026-10-11 08:00:01 INFO Server started
+2026-10-11 08:00:05 INFO Listening on port 8080
+2026-10-11 08:12:44 WARNING Disk usage at 85%
+2026-10-11 08:15:02 ERROR Database connection lost
+2026-10-11 08:15:07 INFO Reconnecting to database
+2026-10-11 08:15:09 INFO Database connection restored
+2026-10-11 09:30:00 WARNING Slow response: 2300 ms
+2026-10-11 10:01:13 ERROR Request timeout: /api/users
+2026-10-11 10:45:00 INFO Backup finished

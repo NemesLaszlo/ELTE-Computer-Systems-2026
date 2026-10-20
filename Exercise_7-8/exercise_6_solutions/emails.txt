@@ -1,0 +1,4 @@
+anna.kiss@example.com
+bela.nagy@example.com
+csilla.toth@example.com
+daniel.kovacs@example.com

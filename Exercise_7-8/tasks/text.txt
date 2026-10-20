@@ -1,0 +1,5 @@
+A bash a leggyakoribb shell Linuxon
+Rovid sor
+Ebben a sorban van a leghosszabb szo parancsbehelyettesites
+
+Az utolso sor

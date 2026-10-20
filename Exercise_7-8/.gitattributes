@@ -1,0 +1,5 @@
+# Ebben a mappában a tesztfájlok sorvégei (CRLF, hiányzó záró újsor) a gyakorlat
+# részei, ezért a git ne alakítsa át őket: bájtra pontosan tároljuk és adjuk vissza.
+# (Ez felülírja a repó gyökerében lévő .gitattributes *.txt szabályát.)
+*.txt -text
+*.log -text
