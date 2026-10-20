@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # 13. feladat: Havonta a leggyakoribb betegség, kulcs-érték tárolóval
 # (asszociatív tömb). A patients_messy.txt egy sora:  Név, ÉÉÉÉ-HH-NN, betegség
 # A fájl "piszkos": fejléc, szóközök a vesszők körül, írásjelek a betegség
@@ -7,6 +7,14 @@
 #
 # Futtatás (a tasks mappából):
 #   ../solutions/13_most_common_illness_per_month.sh patients_messy.txt
+
+# Az asszociatív tömb (declare -A) csak bash 4.0-tól létezik. A macOS
+# beépített /bin/bash-e 3.2-es, ott: brew install bash
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "Error: bash 4+ required (this is $BASH_VERSION)." >&2
+    echo "On macOS: brew install bash" >&2
+    exit 1
+fi
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <file>" >&2

@@ -22,6 +22,9 @@ echo "${str: -10}"      # University
 # Csere a szövegben: ${valtozo/mit/mire}  (// esetén az összes előfordulást cseréli)
 echo "${str/IK/TTK}"    # ELTE TTK University
 
-# Kis- és nagybetűssé alakítás (bash 4-től)
-echo "${str^^}"         # ELTE IK UNIVERSITY
-echo "${str,,}"         # elte ik university
+# Kis- és nagybetűssé alakítás a tr paranccsal (minden rendszeren működik)
+echo "$str" | tr '[:lower:]' '[:upper:]'    # ELTE IK UNIVERSITY
+echo "$str" | tr '[:upper:]' '[:lower:]'    # elte ik university
+
+# Bash 4-től rövidebben is megy: "${str^^}" és "${str,,}"
+# (a macOS beépített bash-e 3.2-es, ott "bad substitution" hibát ad).
